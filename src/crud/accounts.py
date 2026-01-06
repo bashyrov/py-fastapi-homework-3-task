@@ -201,7 +201,7 @@ async def reset_password_completion(db: AsyncSession, user_data: PasswordResetCo
         result = await db.execute(stmt)
         user = result.scalars().first()
 
-        if not user:
+        if not user or not user.is_active:
             raise HTTPException(status_code=400, detail="Invalid email or token.")
 
         password_reset_token = user.password_reset_token

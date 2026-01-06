@@ -22,9 +22,9 @@ async def check_token_is_valid(token: str, expected_token) -> bool:
     if expires_at_utc.tzinfo is None:
         expires_at_utc = expires_at_utc.replace(tzinfo=datetime.timezone.utc)
 
-    is_valid = (
-            expires_at_utc > datetime.datetime.now(datetime.timezone.utc)
-            and secrets.compare_digest(token, expected_token.token)
-    )
+    not_expired = expires_at_utc > datetime.datetime.now(datetime.timezone.utc)
+    token_matches = secrets.compare_digest(token, expected_token.token)
+
+    is_valid = not_expired and token_matches
 
     return is_valid
