@@ -177,6 +177,9 @@ async def password_reset(db: AsyncSession, user_data: PasswordResetRequestSchema
     user = result.scalars().first()
 
     if user and user.is_active is True:
+
+        await db.delete(user.password_reset_token) if user.password_reset_token else None
+
         new_token = PasswordResetTokenModel(user=user)
         db.add(new_token)
         user.password_reset_token = new_token
